@@ -27,7 +27,14 @@ if($insertTrans){
 	$presentSum = mysqli_query($con, "SELECT SUM(contribution) as contributionSum FROM fiveseventransaction") or die(mysqli_error());
 	while($totalIncome = mysqli_fetch_array($presentSum)){
 		$overallIncome = $totalIncome["contributionSum"];
-		mysqli_query($con, "UPDATE fiveseventotal SET overallIncome=$overallIncome");	
+		mysqli_query($con, "UPDATE fiveseventotal SET overallIncome=$overallIncome");
+	}
+
+	$totalContribution = mysqli_query($con, "SELECT totalContribution FROM fiveseven") or die(mysqli_error());
+	while($totalCon = mysqli_fetch_array($totalContribution)){
+		$presentTotalCon = $totalCon["totalContribution"];
+		$newTotalContribution = number_format((float)$presentTotalCon, 2, '.', '') + $returnValue['amountContributed'];
+		mysqli_query($con, "UPDATE fiveseven SET totalContribution='$newTotalContribution' WHERE searchEngine='$searchEngine'");
 	}
 }
 else{
