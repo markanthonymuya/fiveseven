@@ -24,18 +24,33 @@ if($insertTrans){
 	$returnValue['status'] = 'success';
 	$returnValue['amountContributed'] = number_format((float)$amountContributed, 2, '.', '');
 
-	$presentSum = mysqli_query($con, "SELECT SUM(contribution) as contributionSum FROM fiveseventransaction") or die(mysqli_error());
-	while($totalIncome = mysqli_fetch_array($presentSum)){
-		$overallIncome = $totalIncome["contributionSum"];
-		mysqli_query($con, "UPDATE fiveseventotal SET overallIncome=$overallIncome");
+	$query = mysqli_query($con, "SELECT dateViewed FROM fiveseventotal WHERE dateViewed='$dateTransaction'");
+	$fetch_rows = mysqli_num_rows($query);
+
+	$overallIncome = '0.0';
+	$overallSum = mysqli_query($con, "SELECT SUM(contribution) as contributionSum FROM fiveseventransaction") or die(mysqli_error());
+	while($totalIncome = mysqli_fetch_array($overallSum)){
+		$overallIncome = $totalIncome["contributionSum"];	
 	}
+
+	$todayIncome = '0.0';
+	$todaySum = mysqli_query($con, "SELECT SUM(contribution) as contributionTodaySum FROM fiveseventransaction WHERE transDate='$dateTransaction'") or die(mysqli_error());
+	while($totalTodayIncome = mysqli_fetch_array($todaySum)){
+		$todayIncome = $totalTodayIncome["contributionTodaySum"];	
+	}
+
+	if ($fetch_rows == 0){
+		$insertTrans = mysqli_query($con,"INSERT INTO fiveseventotal (todayincome, overallIncome, newContribution, dateViewed) VALUES ('0.00', '$overallIncome', '0.00', '$dateTransaction')");
+	}
+	
+	mysqli_query($con, "UPDATE fiveseventotal SET todayIncome=$todayIncome, overallIncome=$overallIncome, newContribution=$amountContributed WHERE dateViewed='$dateTransaction'");
 
 	$totalContribution = mysqli_query($con, "SELECT totalContribution FROM fiveseven") or die(mysqli_error());
 	while($totalCon = mysqli_fetch_array($totalContribution)){
 		$presentTotalCon = $totalCon["totalContribution"];
 		$newTotalContribution = number_format((float)$presentTotalCon, 2, '.', '') + $returnValue['amountContributed'];
 		mysqli_query($con, "UPDATE fiveseven SET totalContribution='$newTotalContribution' WHERE searchEngine='$searchEngine'");
-	}
+	}	
 }
 else{
 	$returnValue['status'] = 'fail';
