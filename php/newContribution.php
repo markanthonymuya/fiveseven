@@ -19,9 +19,16 @@ while($row = mysqli_fetch_array($resultAccountNumberSearch)){
 
 $returnValue = array();
 
-if(mysqli_query($con,"INSERT INTO fiveseventransaction (accountNumber, contribution, transDate, transTime, transactBy) VALUES ('$accountNumber', '$amountContributed', '$dateTransaction', '$timeTransaction', '$transactBy')")){
+$insertTrans = mysqli_query($con,"INSERT INTO fiveseventransaction (accountNumber, contribution, transDate, transTime, transactBy) VALUES ('$accountNumber', '$amountContributed', '$dateTransaction', '$timeTransaction', '$transactBy')");
+if($insertTrans){
 	$returnValue['status'] = 'success';
 	$returnValue['amountContributed'] = number_format((float)$amountContributed, 2, '.', '');
+
+	$presentSum = mysqli_query($con, "SELECT SUM(contribution) as contributionSum FROM fiveseventransaction") or die(mysqli_error());
+	while($totalIncome = mysqli_fetch_array($presentSum)){
+		$overallIncome = $totalIncome["contributionSum"];
+		mysqli_query($con, "UPDATE fiveseventotal SET overallIncome=$overallIncome");	
+	}
 }
 else{
 	$returnValue['status'] = 'fail';

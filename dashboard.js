@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	
 	function setCookie(c_name,value,exdays)
 	{
 		var exdate=new Date();
@@ -57,9 +58,15 @@ $(document).ready(function(){
 						$('#createMessage').attr('style', 'color:green;');
 						$('#createButton').hide();
 						$('#addNewButton').show();
+						$('#inputName').attr('disabled', 'disabled');
+						$('#inputEmail').attr('disabled', 'disabled');
+						$('#inputContact').attr('disabled', 'disabled');
+						$('#inputAddress').attr('disabled', 'disabled');
+						dataNewAccount = {};
 						$('#addNewButton').focus();
 					}
 				});
+				
 		  	});
 		}
 		$('.sub-header').text("Accounts");
@@ -81,11 +88,19 @@ $(document).ready(function(){
 	  	$('#createLoading').attr('src', '');
 	  	$('#createMessage').text("");
 	  	clearNewAccountInputs();
-	})
+	});
 
 	/////////////////////////////////// New Contribution
 
 	$('#newContributionLink').click(function(){
+		
+		$(function() {
+	        $("#accountSearch").autocomplete({
+	        	source: "php/autoComplete.php",
+	        	appendTo : newContributionModal
+	        });
+	    });
+
 		if(getCookie("adminFullname") == undefined || getCookie("adminLinks") == undefined || getCookie("adminFullname") == "" || getCookie("adminLinks") == ""){
 			// $("#adminLoginMsg").hide();
 			// $("#adminLogin").modal('show');
@@ -94,29 +109,10 @@ $(document).ready(function(){
 			$('#newContributionModal').modal('show');
 		    $('#addNewContributionButton').hide();
 		    $('#contributeButton').show();
-		    $('#accountNameSearch').hide();
-		    $('#addNewAccountModal').on('shown.bs.modal', function (e) {
+		    $('#newContributionModal').on('shown.bs.modal', function (e) {
 				$('#contributeLoading').attr('src', '');
 				$('#accountSearch').focus();
 			})
-
-			$("#contributeButton").click(function(){
-				$('#contributeLoading').attr('src', 'images/loader.gif');
-				$('#contributeButton').attr('disabled', 'disabled');
-
-				var dataNewAccount = {transactBy: getCookie("adminUsername"),searchEngine: $('#accountSearch').val(), amountContributed: $('#inputAmount').val()};
-				$.post("php/newContribution.php", dataNewAccount, function(json,status){
-					if(json.status = "success"){
-						$('#contributeButton').removeAttr('disabled');
-						$('#contributeLoading').attr('src', '');
-						$('#contributeMessage').text("You've successfully contributed: Php " + json.amountContributed);
-						$('#contributeMessage').attr('style', 'color:green;');
-						$('#contributeButton').hide();
-						$('#addNewContributionButton').show();
-						$('#addNewContributionButton').focus();
-					}
-				});
-		  	});
 		}
 		$('.sub-header').text("Today's Transaction");
 		$('#subheadAccounts').hide('slow');
@@ -124,11 +120,57 @@ $(document).ready(function(){
 		$('#subheadAllTrans').hide('slow');
 	});
 
+	$("#contributeButton").click(function(){
+		$('#contributeLoading').attr('src', 'images/loader.gif');
+		$('#contributeButton').attr('disabled', 'disabled');
+
+		var dataNewContribution = {transactBy: getCookie("adminUsername"),searchEngine: $('#accountSearch').val(), amountContributed: $('#inputAmount').val()};
+		$.post("php/newContribution.php", dataNewContribution, function(json,status){
+			if(json.status = "success"){
+				$('#contributeButton').removeAttr('disabled');
+				$('#contributeLoading').attr('src', '');
+				$('#contributeMessage').text("You've successfully contributed: Php " + json.amountContributed);
+				$('#contributeMessage').attr('style', 'color:green;');
+				$('#contributeButton').hide();
+				$('#addNewContributionButton').show();
+				$('#accountSearch').attr('disabled', 'disabled');
+				$('#inputAmount').attr('disabled', 'disabled');
+				dataNewContribution = {};
+				$('#addNewContributionButton').focus();
+			}
+		});
+	});
+
+	$("#addNewContributionButton").click(function(){
+  		clearNewContributionInputs();
+		$('#accountSearch').focus();
+  		$('#contributeButton').show();
+		$('#addNewContributionButton').hide();
+		$('#contributeMessage').text("");
+  	});
+  	
+  	$('#newContributionModal').on('hidden.bs.modal', function (e) {
+	  	$('#contributeLoading').attr('src', '');
+	  	$('#contributeMessage').text("");
+	  	clearNewContributionInputs();
+	});
+
 	var clearNewAccountInputs = function(){
 		$('#inputName').val('');
   		$('#inputEmail').val('');
   		$('#inputContact').val('');
   		$('#inputAddress').val('');
+  		$('#inputName').removeAttr('disabled');
+  		$('#inputEmail').removeAttr('disabled');
+  		$('#inputContact').removeAttr('disabled');
+  		$('#inputAddress').removeAttr('disabled');
+	}
+
+	var clearNewContributionInputs = function(){
+		$('#accountSearch').val('');
+  		$('#inputAmount').val('');
+  		$('#accountSearch').removeAttr('disabled');
+  		$('#inputAmount').removeAttr('disabled');
 	}
 
 
