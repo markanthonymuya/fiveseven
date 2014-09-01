@@ -42,7 +42,14 @@ $(document).ready(function(){
 			$('#addNewAccountModal').modal('show');
 		    $('#addNewButton').hide();
 		    $('#createButton').show();
-		    $('#addNewAccountModal').on('shown.bs.modal', function (e) {
+		}
+		$('.sub-header').text("Accounts");
+		$('#subheadAccounts').show('slow');
+		$('#subheadTodayTrans').hide('slow');
+		$('#subheadAllTrans').hide('slow');
+	});
+
+			$('#addNewAccountModal').on('shown.bs.modal', function (e) {
 				$('#createLoading').attr('src', '');
 				$('#inputName').focus();
 			});
@@ -70,12 +77,6 @@ $(document).ready(function(){
 					}
 				});
 		  	});
-		}
-		$('.sub-header').text("Accounts");
-		$('#subheadAccounts').show('slow');
-		$('#subheadTodayTrans').hide('slow');
-		$('#subheadAllTrans').hide('slow');
-	});
   	
 
   	$("#addNewButton").click(function(){
@@ -112,16 +113,17 @@ $(document).ready(function(){
 			$('#newContributionModal').modal('show');
 		    $('#addNewContributionButton').hide();
 		    $('#contributeButton').show();
-		    $('#newContributionModal').on('shown.bs.modal', function (e) {
-				$('#contributeLoading').attr('src', '');
-				$('#accountSearch').focus();
-			})
 		}
 		$('.sub-header').text("Today's Transaction");
 		$('#subheadAccounts').hide('slow');
 		$('#subheadTodayTrans').show('slow');
 		$('#subheadAllTrans').hide('slow');
 	});
+
+			$('#newContributionModal').on('shown.bs.modal', function (e) {
+				$('#contributeLoading').attr('src', '');
+				$('#accountSearch').focus();
+			})
 
 	$("#contributeButton").click(function(){
 		$('#contributeLoading').attr('src', 'images/loader.gif');
