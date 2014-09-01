@@ -129,7 +129,8 @@ $(document).ready(function(){
 			if(json.status = "success"){
 				$('#contributeButton').removeAttr('disabled');
 				$('#contributeLoading').attr('src', '');
-				$('#contributeMessage').text("You've successfully contributed: Php " + json.amountContributed);
+				$('#contributeMessage').text("New contribution: Php " + json.amountContributed);
+				$('#totalContributionMessage').text("Total Contribution: Php " + json.newTotalContribution);
 				$('#contributeMessage').attr('style', 'color:green;');
 				$('#contributeButton').hide();
 				$('#addNewContributionButton').show();

@@ -20,6 +20,7 @@ while($row = mysqli_fetch_array($resultAccountNumberSearch)){
 $returnValue = array();
 
 $insertTrans = mysqli_query($con,"INSERT INTO fiveseventransaction (accountNumber, contribution, transDate, transTime, transactBy) VALUES ('$accountNumber', '$amountContributed', '$dateTransaction', '$timeTransaction', '$transactBy')");
+
 if($insertTrans){
 	$returnValue['status'] = 'success';
 	$returnValue['amountContributed'] = number_format((float)$amountContributed, 2, '.', '');
@@ -49,6 +50,7 @@ if($insertTrans){
 	while($totalCon = mysqli_fetch_array($totalContribution)){
 		$presentTotalCon = $totalCon["totalContribution"];
 		$newTotalContribution = number_format((float)$presentTotalCon, 2, '.', '') + $returnValue['amountContributed'];
+		$returnValue['newTotalContribution'] = number_format((float)$newTotalContribution, 2, '.', '');
 		mysqli_query($con, "UPDATE fiveseven SET totalContribution='$newTotalContribution' WHERE searchEngine='$searchEngine'");
 	}	
 }
