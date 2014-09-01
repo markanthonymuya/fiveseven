@@ -96,8 +96,7 @@ $(document).ready(function(){
 	
 	/////////////////////////////////// New Contribution
 
-	$('#newContributionLink').click(function(){
-		
+	$('#newContributionLink').click(function(){		
 		$(function() {
 	        $("#accountSearch").autocomplete({
 	        	source: "php/autoComplete.php",
@@ -118,6 +117,8 @@ $(document).ready(function(){
 		$('#subheadAccounts').hide('slow');
 		$('#subheadTodayTrans').show('slow');
 		$('#subheadAllTrans').hide('slow');
+
+		showTodayIncome();
 	});
 
 			$('#newContributionModal').on('shown.bs.modal', function (e) {
@@ -143,6 +144,7 @@ $(document).ready(function(){
 				$('#inputAmount').attr('disabled', 'disabled');
 				dataNewContribution = {};
 				$('#addNewContributionButton').focus();
+				showTodayIncome();
 			}
 		});
 	});
@@ -152,13 +154,10 @@ $(document).ready(function(){
 		$('#accountSearch').focus();
   		$('#contributeButton').show();
 		$('#addNewContributionButton').hide();
-		$('#contributeMessage').text("");
   	});
   	
   	$('#newContributionModal').on('hidden.bs.modal', function (e) {
 	  	$('#contributeLoading').attr('src', '');
-	  	$('#contributeMessage').text("");
-	  	$('#totalContributionMessage').text("");
 	  	clearNewContributionInputs();
 	});
 
@@ -179,6 +178,20 @@ $(document).ready(function(){
 		});
 	}
 
+	/////////////////////////////////// Show Account Results
+	var todayIncomeResultsAppended = false;
+	var showTodayIncome = function(){
+		if(todayIncomeResultsAppended){
+			$(".todayIncomeTableResults").remove();
+		}
+		
+		$.post("php/getTodayTrans.php", function(json,status){
+			for(var totalResults = 1; totalResults <= json.totalResults; totalResults++){
+				$("#todayIncomeTable").append('<tr class="todayIncomeTableResults"><td>'+json['accountNumber'+totalResults]+'</td><td>'+json['accountName'+totalResults]+'</td><td>'+json['contribution'+totalResults]+'</td><td>'+json['totalContribution'+totalResults]+'</td><td>'+(new Date().getFullYear()*10000)+parseInt(json['receiptNumber'+totalResults])+'</td></tr>');
+				todayIncomeResultsAppended = true;
+			}
+		});
+	}
 
 	var clearNewAccountInputs = function(){
 		$('#inputName').val('');
@@ -196,6 +209,8 @@ $(document).ready(function(){
   		$('#inputAmount').val('');
   		$('#accountSearch').removeAttr('disabled');
   		$('#inputAmount').removeAttr('disabled');
+  		$('#contributeMessage').text("");
+		$('#totalContributionMessage').text("");
 	}
 
 
@@ -205,6 +220,7 @@ $(document).ready(function(){
 		$('#subheadAccounts').hide('slow');
 		$('#subheadTodayTrans').show('slow');
 		$('#subheadAllTrans').hide('slow');
+		showTodayIncome();
 	});
 
 
