@@ -12,7 +12,8 @@
         $json[$counter] = $fivesevenAccount["searchEngine"];
         $counter++;
     }
- 
+ 	
+ 	header("Content-type:application/json");
 	echo json_encode($json);
  
 ?>

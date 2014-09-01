@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	
+
 	function setCookie(c_name,value,exdays)
 	{
 		var exdate=new Date();
@@ -29,9 +29,11 @@ $(document).ready(function(){
 
 	$('#subheadTodayTrans').hide('slow');
 	$('#subheadAllTrans').hide('slow');
+	
 	/////////////////////////Add New Account
 
 	$('#addNewAccountLink').click(function(){
+		showAccounts(10, 0, 10);
 		if(getCookie("adminFullname") == undefined || getCookie("adminLinks") == undefined || getCookie("adminFullname") == "" || getCookie("adminLinks") == ""){
 			// $("#adminLoginMsg").hide();
 			// $("#adminLogin").modal('show');
@@ -64,9 +66,9 @@ $(document).ready(function(){
 						$('#inputAddress').attr('disabled', 'disabled');
 						dataNewAccount = {};
 						$('#addNewButton').focus();
+						showAccounts(10, 0, 10);
 					}
 				});
-				
 		  	});
 		}
 		$('.sub-header').text("Accounts");
@@ -90,6 +92,7 @@ $(document).ready(function(){
 	  	clearNewAccountInputs();
 	});
 
+	
 	/////////////////////////////////// New Contribution
 
 	$('#newContributionLink').click(function(){
@@ -156,6 +159,24 @@ $(document).ready(function(){
 	  	clearNewContributionInputs();
 	});
 
+
+	/////////////////////////////////// Show Account Results
+	var accountResultsAppended = false;
+	var showAccounts = function(limitResultsVal, idMinVal, idMaxVal){
+		var queryRangeAndLimits = {limitResults: limitResultsVal, idMin: idMinVal, idMax: idMaxVal};
+		if(accountResultsAppended){
+			$(".accountTableResults").remove();
+		}
+		
+		$.post("php/getAccounts.php", queryRangeAndLimits, function(json,status){
+			for(var totalResults = 1; totalResults <= json.totalResults; totalResults++){
+				$("#bodyOfAccountsTable").append('<tr class="accountTableResults"><td>'+json['accountNumber'+totalResults]+'</td><td>'+json['accountName'+totalResults]+'</td><td>'+json['contactNumber'+totalResults]+'</td><td>'+json['homeAddress'+totalResults]+'</td><td>'+json['emailAddress'+totalResults]+'</td><td>'+json['totalContribution'+totalResults]+'</td></tr>');
+				accountResultsAppended = true;
+			}
+		});
+	}
+
+
 	var clearNewAccountInputs = function(){
 		$('#inputName').val('');
   		$('#inputEmail').val('');
@@ -192,4 +213,5 @@ $(document).ready(function(){
 		$('#subheadAllTrans').show('slow');
 	});
 
+	showAccounts(10, 0, 10);
 });
