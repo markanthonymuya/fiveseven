@@ -158,6 +158,7 @@ $(document).ready(function(){
   	$('#newContributionModal').on('hidden.bs.modal', function (e) {
 	  	$('#contributeLoading').attr('src', '');
 	  	$('#contributeMessage').text("");
+	  	$('#totalContributionMessage').text("");
 	  	clearNewContributionInputs();
 	});
 
